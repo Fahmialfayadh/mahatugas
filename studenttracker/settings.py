@@ -25,7 +25,18 @@ SECRET_KEY = 'django-insecure-y5(=(q4v73tok90^$g+n)jaj0n6hflz+-hfi((k!y=+#nh+s!f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+import os
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "mahatugas-production.up.railway.app",
+]
+
+# atau biar fleksibel:
+if "RAILWAY_PUBLIC_DOMAIN" in os.environ:
+    ALLOWED_HOSTS.append(os.environ["RAILWAY_PUBLIC_DOMAIN"])
+
 
 
 # Application definition
@@ -137,3 +148,4 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
