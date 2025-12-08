@@ -1,0 +1,32 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>Student Form</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.nrp.label_tag }}
+        {{ form.nrp }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.email.label_tag }}
+        {{ form.email }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.photo_file.label_tag }}
+        {{ form.photo_file }}
+    </div>
+
+    <button class="btn btn-success" type="submit">Save</button>
+</form>
+
+{% endblock %}

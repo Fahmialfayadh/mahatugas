@@ -1,0 +1,37 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>{% if is_edit %}Edit Lecturer{% else %}Add Lecturer{% endif %}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        {{ form.lecturer_name.label_tag }}
+        {% if edit_mode %}
+            {{ form.lecturer_name }}
+        {% else %}
+            <input type="text" class="form-control" value="{{ form.lecturer_name.value }}" disabled>
+        {% endif %}
+
+    </div>
+
+    <div class="mb-3">
+        {{ form.lecturer_email.label_tag }}
+        {% if edit_mode %}
+            {{ form.lecturer_email }}
+        {% else %}
+            <input type="email" class="form-control" value="{{ form.lecturer_email.value }}" disabled>
+        {% endif %}
+    </div>
+
+
+    {% if edit_mode %}
+    <button type="submit" class="btn btn-primary">
+        {% if is_edit %}Update{% else %}Create{% endif %}
+    </button>
+    {% endif %}
+
+    <a href="{% url 'lecturer_list' %}" class="btn btn-secondary">Back</a>
+</form> 
+{% endblock %}

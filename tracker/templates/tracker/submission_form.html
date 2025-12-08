@@ -1,0 +1,41 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<h2>Add Submission</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Assignment</label>
+        {{ form.assignment }}
+    </div>
+
+    <div class="mb-3">
+        <label>Student</label>
+        {{ form.student }}
+    </div>
+
+    <div class="mb-3">
+        <label>Submitted At</label>
+        {{ form.submitted_at }}
+    </div>
+
+    <div class="mb-3">
+        <label>File</label>
+        {{ form.file_path }}
+    </div>
+
+    <div class="mb-3">
+        <label>Score</label>
+        {{ form.score }}
+    </div>
+
+    <div class="mb-3">
+        <label>Remark</label>
+        {{ form.remark }}
+    </div>
+
+    <button type="submit" class="btn btn-success">Submit</button>
+</form>
+
+{% endblock %}

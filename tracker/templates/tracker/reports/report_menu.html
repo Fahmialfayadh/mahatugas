@@ -1,0 +1,17 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<h2>Reports</h2>
+
+<ul class="list-group mt-3">
+    <li class="list-group-item"><a href="{% url 'report_late_submissions' %}">Late Submissions</a></li>
+    <li class="list-group-item"><a href="{% url 'report_missing_submissions' %}">Missing Submissions</a></li>
+    <li class="list-group-item"><a href="{% url 'report_score_average' %}">Average Score (All)</a></li>
+    <li class="list-group-item"><a href="{% url 'report_score_per_course' %}">Average Score Per Course</a></li>
+    <li class="list-group-item"><a href="{% url 'report_no_submission' %}">Assignments Without Submission</a></li>
+    <li class="list-group-item"><a href="{% url 'report_top_students' %}">Top Students</a></li>
+    <li class="list-group-item"><a href="{% url 'report_low_students' %}">Lowest Score Students</a></li>
+    <li class="list-group-item"><a href="{% url 'report_submission_count' %}">Submission Count Per Student</a></li>
+    <li class="list-group-item"><a href="{% url 'report_assignment_popularity' %}">Assignment Popularity</a></li>
+    <li class="list-group-item"><a href="{% url 'report_sort_submissions' %}?by=asc">Sort Submissions ASC/DESC</a></li>
+</ul>
+{% endblock %}

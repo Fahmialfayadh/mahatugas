@@ -1,0 +1,62 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<h3>{{ course.course_code }} - {{ course.course_name }}</h3>
+<p class="text-secondary">
+    Semester: {{ course.semester }} | Lecturer: {{ course.lecturer.lecturer_name }}
+</p>
+
+<h5 class="mt-4">Assignments</h5>
+
+<div class="table-responsive mt-2">
+    <table class="table table-dark table-striped table-sm align-middle">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Due Date</th>
+            <th>Max Score</th>
+            <th>Actions</th>  <!-- WAJIB ADA -->
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for a in assignments %}
+        <tr>
+            <td>{{ a.title }}</td>
+            <td>{{ a.due_date }}</td>
+            <td>{{ a.max_score }}</td>
+            <td class="d-flex gap-2">
+
+                {% if edit_mode %}
+                    <a href="{% url 'assignment_edit' a.assignment_id %}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{% url 'assignment_delete' a.assignment_id %}" class="btn btn-danger btn-sm">Delete</a>
+                {% else %}
+                    <button class="btn btn-secondary btn-sm" disabled>Edit</button>
+                    <button class="btn btn-secondary btn-sm" disabled>Delete</button>
+                {% endif %}
+
+                <!-- ⭐ TOMBOL BARU DI SINI ⭐ -->
+                <a href="{% url 'assignment_submissions' a.assignment_id %}" 
+                class="btn btn-outline-info btn-sm">
+                    View Submissions
+                </a>
+
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="mt-4">
+        <a href="{% url 'courses_list' %}" class="btn btn-outline-light">← Back to Courses</a>
+    </div>
+
+</div>
+
+{% if request.session.edit_mode %}
+<a href="{% url 'assignment_create' %}" class="btn btn-sm btn-outline-primary mt-3">
+    + Add Assignment
+</a>
+{% endif %}
+
+{% endblock %}

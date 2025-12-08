@@ -1,0 +1,35 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>Query Result</h2>
+
+<h5>SQL:</h5>
+<pre class="bg-dark text-light p-3 rounded">{{ query }}</pre>
+
+{% if error %}
+    <p class="text-danger">{{ error }}</p>
+{% else %}
+    <h5>Output:</h5>
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                {% for col in columns %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    {% for col in row %}
+                        <td>{{ col }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+<a href="{% url 'queries_menu' %}" class="btn btn-secondary mt-3">Back</a>
+
+{% endblock %}

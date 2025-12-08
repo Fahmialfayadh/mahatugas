@@ -1,0 +1,38 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<h3>New Assignment</h3>
+
+<form method="post" class="mt-3">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        {{ form.course.label_tag }}
+        {{ form.course }} 
+    </div>
+
+    <div class="mb-3">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.due_date.label_tag }}
+        {{ form.due_date }}
+        <small class="text-secondary d-block">Format: YYYY-MM-DD HH:MM:SS</small>
+    </div>
+
+    <div class="mb-3">
+        {{ form.max_score.label_tag }}
+        {{ form.max_score }}
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+</form>
+
+{% endblock %}

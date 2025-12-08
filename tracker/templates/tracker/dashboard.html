@@ -1,0 +1,137 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<style>
+    .stats-card {
+        background: #1f1f1f;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 0 8px rgba(0,0,0,0.35);
+        transition: 0.2s;
+    }
+    .stats-card:hover {
+        transform: translateY(-4px);
+    }
+    .stats-value {
+        font-size: 32px;
+        font-weight: bold;
+        color: #4caf50;
+    }
+    .stats-label {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .dash-card {
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 18px;
+        box-shadow: 0 0 8px rgba(0,0,0,0.35);
+        transition: 0.2s ease;
+        cursor: pointer;
+    }
+    .dash-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0 16px rgba(0,0,0,0.45);
+    }
+
+    .status-pill {
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .pill-missing { background:#ff4d4d; color:#fff; }
+    .pill-late { background:#ffb300; color:#000; }
+    .pill-nosub { background:#607d8b; color:#fff; }
+    .pill-has { background:#4caf50; color:#fff; }
+
+    .due-date {
+        font-size: 13px;
+        opacity: 0.8;
+    }
+</style>
+
+
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- =======================
+     STATISTICS SECTION
+========================== -->
+<div class="row mb-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-value">{{ total_students }}</div>
+            <div class="stats-label">Students</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-value">{{ total_courses }}</div>
+            <div class="stats-label">Courses</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-value">{{ total_assignments }}</div>
+            <div class="stats-label">Assignments</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="stats-card">
+            <div class="stats-value">{{ total_submissions }}</div>
+            <div class="stats-label">Submissions</div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<!-- =======================
+     ASSIGNMENT CARDS
+========================== -->
+<div class="row">
+
+    {% for a in assignment_status_list %}
+    <div class="col-md-6 col-lg-4">
+        <a href="{% url 'course_detail' a.assignment.course.course_id %}" style="text-decoration:none; color:inherit;">
+            <div class="dash-card">
+
+                <h5>{{ a.assignment.title }}</h5>
+
+                <div class="text-secondary mb-1">
+                    {{ a.assignment.course.course_code }} - {{ a.assignment.course.course_name }}
+                </div>
+
+                <div class="due-date mb-2">
+                    Due: {{ a.assignment.due_date|date:"M d, Y - H:i" }}
+                </div>
+
+                {% if a.status == "Missing" %}
+                    <span class="status-pill pill-missing">Missing</span>
+                {% elif a.status == "No Submission Yet" %}
+                    <span class="status-pill pill-nosub">No Submission Yet</span>
+                {% elif a.status == "Has Submissions" %}
+                    <span class="status-pill pill-has">Has Submissions</span>
+                {% endif %}
+
+                <div class="mt-2">
+                    <small class="text-secondary">Submissions: {{ a.submitted_count }}</small>
+                </div>
+
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

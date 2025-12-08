@@ -1,0 +1,14 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>Average Score</h2>
+
+<div class="mt-4 p-4 bg-dark rounded shadow-sm">
+    <h4>
+        Rata-rata nilai seluruh submissions:
+        <span class="text-info">{{ avg.score__avg|default:"0" }}</span>
+    </h4>
+</div>
+
+<a href="{% url 'report_menu' %}" class="btn btn-secondary mt-3">← Back to Reports</a>
+{% endblock %}

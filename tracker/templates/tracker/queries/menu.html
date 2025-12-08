@@ -1,0 +1,17 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>Queries Demo</h2>
+<p>Pilih query untuk dijalankan:</p>
+
+<ul class="list-group">
+    {% for id, sql in queries.items %}
+        <li class="list-group-item bg-dark text-light">
+            <a href="{% url 'run_query' id %}" class="text-info">
+                Query {{ id }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<h2>Courses</h2>
+
+{% if request.session.edit_mode %}
+    <a href="{% url 'course_create' %}" class="btn btn-success mb-3">+ Add Course</a>
+{% endif %}
+
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Semester</th>
+            <th>Lecturer</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for c in courses %}
+        <tr>
+            <td><a href="{% url 'course_detail' c.course_id %}">{{ c.course_code }}</a></td>
+            <td>{{ c.course_name }}</td>
+            <td>{{ c.semester }}</td>
+            <td>{{ c.lecturer.lecturer_name }}</td>
+
+            <td>
+                {% if request.session.edit_mode %}
+                    <a href="{% url 'course_edit' c.course_id %}" class="btn btn-primary btn-sm">Edit</a>
+                    <a href="{% url 'course_delete' c.course_id %}" class="btn btn-danger btn-sm">Delete</a>
+                {% else %}
+                    <span class="text-muted">View Only</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
