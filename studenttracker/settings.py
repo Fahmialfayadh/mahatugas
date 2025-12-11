@@ -23,7 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-y5(=(q4v73tok90^$g+n)jaj0n6hflz+-hfi((k!y=+#nh+s!f'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+import os
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
 import os
 
@@ -146,11 +147,15 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-# Use Manifest storage in production for cache-busting. If collectstatic
-# raises a ManifestMissingError during build, fix the missing file
-# references and re-run collectstatic. Keep this as the default for
-# production deployments to ensure stable cache behavior.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use Manifest storage in production for cache-busting. If DEBUG is True we use
+# the non-manifest storage to avoid failing local debugging due to a missing
+# manifest (useful in development). In production make sure DJANGO_DEBUG=False
+# is set (e.g., Railway environment variable setting) so we enable manifest
+# storage and proper cache busting.
+if DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+else:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
