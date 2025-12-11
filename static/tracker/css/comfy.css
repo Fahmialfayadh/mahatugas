@@ -34,8 +34,23 @@ body {
     font-weight: 500;
 }
 
-.navbar-nav .nav-link:hover {
-    color: #f97316 !important;
+    /* Show desktop sidebar as horizontal top nav on large phones */
+    .sidebar {
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        background: #ffffff;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+        min-height: auto;
+        padding: 0.5rem 0.75rem;
+        z-index: 1050;
+        overflow-x: auto;
+        white-space: nowrap;
+        align-items: center;
     background: rgba(249, 115, 22, 0.05);
     border-radius: 4px;
 }
@@ -192,7 +207,39 @@ body {
     }
 
     .sidebar {
-        display: none !important;
+        /* Show desktop sidebar as a horizontal top nav on very small devices */
+        display: flex !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: auto;
+        background: #ffffff;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+        min-height: auto;
+        padding: 0.5rem 0.75rem;
+        z-index: 1050;
+        overflow-x: auto;
+        white-space: nowrap;
+        align-items: center;
+    }
+
+    /* Hide the small-screen bootstrap navbar to avoid duplicates */
+    .navbar { display: none !important; }
+
+    /* Layout sidebar contents horizontally */
+    .sidebar .sidebar-header { display: none; }
+    .sidebar .sidebar-scrollable { overflow: visible; }
+    .sidebar .sidebar-scrollable .nav {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .sidebar .nav-link {
+        padding: 0.5rem 0.75rem !important;
+        white-space: nowrap;
     }
 
     .container-fluid {
@@ -380,6 +427,8 @@ body {
 
     .content-inner {
         padding: 1.25rem 1rem;
+        /* compensate for the fixed top sidebar */
+        padding-top: calc(56px + 1rem);
         max-width: 100%;
     }
 

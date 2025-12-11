@@ -146,7 +146,11 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# During debugging/deployment it's sometimes useful to fall back to
+# CompressedStaticFilesStorage to avoid Manifest errors when static
+# references mismatch during collectstatic. This is a temporary change
+# — prefer Manifest storage for long-term caching.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
