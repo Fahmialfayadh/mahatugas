@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "mahatugas-production.up.railway.app",
+    "mahatugas.up.railway.app/",
 ]
 
 # atau biar fleksibel:
