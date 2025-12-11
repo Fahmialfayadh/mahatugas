@@ -146,11 +146,11 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-# During debugging/deployment it's sometimes useful to fall back to
-# CompressedStaticFilesStorage to avoid Manifest errors when static
-# references mismatch during collectstatic. This is a temporary change
-# — prefer Manifest storage for long-term caching.
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Use Manifest storage in production for cache-busting. If collectstatic
+# raises a ManifestMissingError during build, fix the missing file
+# references and re-run collectstatic. Keep this as the default for
+# production deployments to ensure stable cache behavior.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
