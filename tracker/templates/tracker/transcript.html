@@ -23,13 +23,22 @@
                                 {% if active_student %}👤 {{ active_student.name|truncatechars:15 }}{% else %}Filter by
                                 Student{% endif %}
                             </button>
-                            <ul class="dropdown-menu shadow border-0" style="max-height: 300px; overflow-y: auto;">
+                            <ul class="dropdown-menu shadow border-0"
+                                style="max-height: 350px; overflow-y: auto; min-width: 250px;" id="studentDropdown">
+                                <li class="px-2 py-1 sticky-top bg-white">
+                                    <input type="text" class="form-control form-control-sm" id="studentSearch"
+                                        placeholder="🔍 Cari nama..." autocomplete="off">
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item" href="{% url 'transcript' %}">All Students</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 {% for s in all_students %}
-                                <li><a class="dropdown-item" href="{% url 'transcript_by_student' s.student_id %}">{{                                         s.name }}</a></li>
+                                <li class="student-item"><a class="dropdown-item"
+                                        href="{% url 'transcript_by_student' s.student_id %}">{{ s.name }}</a></li>
                                 {% endfor %}
                             </ul>
                         </div>
@@ -157,8 +166,8 @@
             </table>
         </div>
 
-        {% else %}
-        <!-- ========================== STUDENT TRANSCRIPT VIEW ========================== -->
+        {% elif active_student %}
+        <!-- ========================== SINGLE STUDENT TRANSCRIPT VIEW ========================== -->
 
         <!-- Student View Header -->
         <div class="row mb-5">
@@ -166,14 +175,11 @@
                 <table class="table table-borderless table-sm w-auto">
                     <tr>
                         <td class="text-muted text-uppercase small fw-bold" style="width: 120px;">Student Name</td>
-                        <td class="fw-bold fs-5">
-                            {% if active_student %}{{ active_student.name }}{% else %}<span
-                                class="text-muted fst-italic">Multiple Students Selected</span>{% endif %}
-                        </td>
+                        <td class="fw-bold fs-5">{{ active_student.name }}</td>
                     </tr>
                     <tr>
                         <td class="text-muted text-uppercase small fw-bold">Student ID</td>
-                        <td>{% if active_student %}STD-{{ active_student.student_id|stringformat:"04d" }}{% else %}---{%                             endif %}</td>
+                        <td>STD-{{ active_student.student_id|stringformat:"04d" }}</td>
                     </tr>
                     <tr>
                         <td class="text-muted text-uppercase small fw-bold">Date Issued</td>
@@ -206,14 +212,11 @@
                 </thead>
                 <tbody>
                     {% for course in course_list %}
-                    <!-- Course Header Row -->
                     <tr class="bg-light table-group-divider">
                         <td colspan="3" class="py-2 ps-2">
                             <span class="fw-bold text-dark">{{ course.grouper.course_code }} - {{                                 course.grouper.course_name }}</span>
                         </td>
                     </tr>
-
-                    <!-- Assignment Rows -->
                     {% for item in course.list %}
                     <tr>
                         <td class="ps-4 text-secondary">{{ item.assignment.title }}</td>
@@ -224,16 +227,84 @@
                             <span class="text-success">ON TIME</span>
                             {% endif %}
                         </td>
-                        <td class="text-end fw-bold font-monospace">
-                            {{ item.score|floatformat:0 }}
-                        </td>
+                        <td class="text-end fw-bold font-monospace">{{ item.score|floatformat:0 }}</td>
                     </tr>
                     {% endfor %}
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center py-5 text-muted fst-italic">
-                            No academic records found.
+                        <td colspan="3" class="text-center py-5 text-muted fst-italic">No academic records found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+        <!-- ========================== DEFAULT VIEW (ALL SUBMISSIONS) ========================== -->
+
+        <!-- Default Header -->
+        <div class="row mb-4">
+            <div class="col-8">
+                <table class="table table-borderless table-sm w-auto">
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold" style="width: 120px;">Report Type</td>
+                        <td class="fw-bold fs-5">All Student Records</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Date Issued</td>
+                        <td>{% now "F j, Y" %}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-4 text-end align-self-end">
+                <div class="bg-light p-3 rounded text-center border">
+                    <div class="small text-uppercase text-muted fw-bold">Overall Average</div>
+                    <div class="display-6 fw-bold text-dark">{{ average_score|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar for Table -->
+        <div class="mb-3 d-print-none">
+            <input type="text" class="form-control" id="tableSearch"
+                placeholder="🔍 Search by name, course, or assignment...">
+        </div>
+
+        <!-- All Submissions Table -->
+        <div class="mb-5">
+            <h5 class="text-uppercase border-bottom border-2 border-dark pb-2 mb-3 fw-bold small ls-1">All Submissions
+            </h5>
+
+            <table class="table table-sm formal-table" id="allSubmissionsTable">
+                <thead>
+                    <tr class="text-uppercase small text-muted border-bottom">
+                        <th>Student Name</th>
+                        <th>NRP</th>
+                        <th>Course</th>
+                        <th>Assignment</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-end">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in submissions %}
+                    <tr class="submission-row">
+                        <td class="fw-medium">{{ item.student.name }}</td>
+                        <td class="font-monospace small">{{ item.student.nrp|default:"-" }}</td>
+                        <td class="small">{{ item.assignment.course.course_code }}</td>
+                        <td class="text-secondary">{{ item.assignment.title }}</td>
+                        <td class="text-center small">
+                            {% if item.status == 'Late' %}
+                            <span class="text-danger fw-bold">LATE</span>
+                            {% else %}
+                            <span class="text-success">ON TIME</span>
+                            {% endif %}
                         </td>
+                        <td class="text-end fw-bold font-monospace">{{ item.score|floatformat:0 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted fst-italic">No submissions found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -312,5 +383,57 @@
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Student dropdown search
+        const searchInput = document.getElementById('studentSearch');
+        const dropdown = document.getElementById('studentDropdown');
+
+        if (searchInput && dropdown) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const items = dropdown.querySelectorAll('.student-item');
+
+                items.forEach(function (item) {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            searchInput.addEventListener('click', function (e) {
+                e.stopPropagation();
+            });
+
+            dropdown.parentElement.querySelector('.dropdown-toggle').addEventListener('shown.bs.dropdown', function () {
+                searchInput.focus();
+            });
+        }
+
+        // Table search (for default view)
+        const tableSearch = document.getElementById('tableSearch');
+        const submissionsTable = document.getElementById('allSubmissionsTable');
+
+        if (tableSearch && submissionsTable) {
+            tableSearch.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const rows = submissionsTable.querySelectorAll('.submission-row');
+
+                rows.forEach(function (row) {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
 
 {% endblock %}

@@ -1,17 +1,203 @@
 {% extends "tracker/base.html" %}
-{% block content %}
-<h2>Reports</h2>
 
-<ul class="list-group mt-3">
-    <li class="list-group-item"><a href="{% url 'report_late_submissions' %}">Late Submissions</a></li>
-    <li class="list-group-item"><a href="{% url 'report_missing_submissions' %}">Missing Submissions</a></li>
-    <li class="list-group-item"><a href="{% url 'report_score_average' %}">Average Score (All)</a></li>
-    <li class="list-group-item"><a href="{% url 'report_score_per_course' %}">Average Score Per Course</a></li>
-    <li class="list-group-item"><a href="{% url 'report_no_submission' %}">Assignments Without Submission</a></li>
-    <li class="list-group-item"><a href="{% url 'report_top_students' %}">Top Students</a></li>
-    <li class="list-group-item"><a href="{% url 'report_low_students' %}">Lowest Score Students</a></li>
-    <li class="list-group-item"><a href="{% url 'report_submission_count' %}">Submission Count Per Student</a></li>
-    <li class="list-group-item"><a href="{% url 'report_assignment_popularity' %}">Assignment Popularity</a></li>
-    <li class="list-group-item"><a href="{% url 'report_sort_submissions' %}?by=asc">Sort Submissions ASC/DESC</a></li>
-</ul>
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex align-items-center mb-4">
+        <div>
+            <h2 class="mb-1 text-primary fw-bold">Analytics & Reports</h2>
+            <p class="text-muted mb-0">Deep dive into student performance and course statistics.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Section: Performance Analytics -->
+        <div class="col-12">
+            <h6 class="text-uppercase text-muted fw-bold small ls-1 mb-3">Performance Analytics</h6>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'report_score_average' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-primary-subtle text-primary mb-3 mx-auto">
+                            📊
+                        </div>
+                        <h6 class="fw-bold text-dark">Overall Average</h6>
+                        <p class="small text-muted mb-0">Average scores across all assignments and courses.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'report_score_per_course' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-info-subtle text-info mb-3 mx-auto">
+                            📈
+                        </div>
+                        <h6 class="fw-bold text-dark">Course Averages</h6>
+                        <p class="small text-muted mb-0">Detailed breakdown of average scores per course.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'report_top_students' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-success-subtle text-success mb-3 mx-auto">
+                            🏆
+                        </div>
+                        <h6 class="fw-bold text-dark">Top Students</h6>
+                        <p class="small text-muted mb-0">Identify high-achieving students.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a href="{% url 'report_low_students' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body text-center p-4">
+                        <div class="icon-circle bg-warning-subtle text-warning mb-3 mx-auto">
+                            🆘
+                        </div>
+                        <h6 class="fw-bold text-dark">Needs Attention</h6>
+                        <p class="small text-muted mb-0">Students with lower scores who may need help.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Section: Submission Tracking -->
+        <div class="col-12 mt-4">
+            <h6 class="text-uppercase text-muted fw-bold small ls-1 mb-3">Submission Tracking</h6>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_late_submissions' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body d-flex align-items-center p-4">
+                        <div class="icon-square bg-danger-subtle text-danger me-3 rounded-3 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px; font-size: 1.5rem;">
+                            ⏰
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">Late Submissions</h6>
+                            <p class="small text-muted mb-0">Track deadlines missed.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_missing_submissions' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body d-flex align-items-center p-4">
+                        <div class="icon-square bg-dark-subtle text-dark me-3 rounded-3 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px; font-size: 1.5rem;">
+                            ❌
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">Missing Submissions</h6>
+                            <p class="small text-muted mb-0">Assignments not yet turned in.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_no_submission' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body d-flex align-items-center p-4">
+                        <div class="icon-square bg-secondary-subtle text-secondary me-3 rounded-3 d-flex align-items-center justify-content-center"
+                            style="width: 48px; height: 48px; font-size: 1.5rem;">
+                            📂
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1">Zero Submissions</h6>
+                            <p class="small text-muted mb-0">Assignments with 0 entries.</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Section: Trends & Tools -->
+        <div class="col-12 mt-4">
+            <h6 class="text-uppercase text-muted fw-bold small ls-1 mb-3">Trends & Tools</h6>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_submission_count' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-primary me-2">Stats</span>
+                            <h6 class="fw-bold text-dark mb-0">Submission Count</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Total submissions per student.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_assignment_popularity' %}" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-info me-2">Trends</span>
+                            <h6 class="fw-bold text-dark mb-0">Assignment Popularity</h6>
+                        </div>
+                        <p class="small text-muted mb-0">Most active assignments.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'report_sort_submissions' %}?by=asc" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm hover-lift card-hover">
+                    <div class="card-body p-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-secondary me-2">Tool</span>
+                            <h6 class="fw-bold text-dark mb-0">Sort Data</h6>
+                        </div>
+                        <p class="small text-muted mb-0">View sorted submission lists.</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .ls-1 {
+        letter-spacing: 1px;
+    }
+
+    .icon-circle {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+
+    .hover-lift {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+    }
+</style>
 {% endblock %}

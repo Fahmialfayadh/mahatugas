@@ -1,20 +1,52 @@
 {% extends "tracker/base.html" %}
+
 {% block content %}
-<h3>Assignment Popularity (Most Submitted)</h3>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{% url 'report_menu' %}" class="text-decoration-none text-muted small fw-bold">
+                ← Back to Reports
+            </a>
+            <h2 class="mt-1 mb-0 text-info fw-bold">Assignment Activity</h2>
+            <p class="text-muted mb-0">Assignments with the highest number of submissions.</p>
+        </div>
+    </div>
 
-<table class="table table-striped mt-3">
-    <tr>
-        <th>Assignment</th>
-        <th>Course</th>
-        <th>Total Submissions</th>
-    </tr>
-
-    {% for a in data %}
-    <tr>
-        <td>{{ a.title }}</td>
-        <td>{{ a.course.course_code }}</td>
-        <td>{{ a.total }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="text-uppercase small text-muted fw-bold">
+                            <th class="ps-4">Assignment</th>
+                            <th>Course</th>
+                            <th class="text-end pe-4">Total Submissions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in data %}
+                        <tr>
+                            <td class="ps-4 fw-medium">{{ a.title }}</td>
+                            <td>
+                                <span class="badge bg-light text-dark border">{{ a.course.course_code }}</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                {{ a.total }}
+                                <div class="progress mt-1" style="height: 4px; width: 60px; margin-left: auto;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 75%"
+                                        aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">No popularity data available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
