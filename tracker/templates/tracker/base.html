@@ -14,8 +14,70 @@
 
 <body>
     <div class="container-fluid p-0 overflow-hidden">
-        <div class="row g-0">
-            <!-- Sidebar -->
+        <div class="row g-0 flex-column flex-md-row">
+            <!-- Sidebar/Top Navbar -->
+            <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom d-md-none">
+                <div class="container-fluid px-3">
+                    <a class="navbar-brand" href="{% url 'dashboard' %}">
+                        <strong>MahaTugas</strong>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                        data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" 
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.path == '/' %}active{% endif %}" 
+                                    href="{% url 'dashboard' %}">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'students_list' %}active{% endif %}" 
+                                    href="{% url 'students_list' %}">Students</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'lecturer_list' %}active{% endif %}" 
+                                    href="{% url 'lecturer_list' %}">Lecturers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'courses_list' %}active{% endif %}" 
+                                    href="{% url 'courses_list' %}">Courses</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'submissions_list' %}active{% endif %}" 
+                                    href="{% url 'submissions_list' %}">Submissions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'transcript' %}active{% endif %}" 
+                                    href="{% url 'transcript' %}">Transcript</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'report_menu' %}active{% endif %}" 
+                                    href="{% url 'report_menu' %}">Reports</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'overview' %}">Overview</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'queries_menu' %}">Queries</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-sm btn-warning ms-2" 
+                                    href="{% url 'toggle_edit' %}">
+                                    {% if request.session.edit_mode %}
+                                    🔒 Exit Edit
+                                    {% else %}
+                                    ✏️ Edit
+                                    {% endif %}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Desktop Sidebar (hidden on mobile) -->
             <nav class="col-md-3 col-lg-2 d-none d-md-block sidebar">
                 <div class="d-flex flex-column h-100">
                     <div class="p-4 sidebar-header">
@@ -104,6 +166,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        console.log('✨ MahaTugas App Loaded! Navbar visible on all devices');
+    </script>
 </body>
 
 </html>
