@@ -170,33 +170,7 @@
         console.log('✨ MahaTugas App Loaded! Navbar visible on all devices');
     </script>
 
-    <!-- Debug helper: check that comfy.css is reachable and contains expected rules -->
-    <script>
-    (function(){
-        var cssUrl = '{% static "tracker/css/comfy.css" %}';
-        // Try fetching the stylesheet to detect deployment issues (no-cache to avoid stale cache).
-        fetch(cssUrl, {cache: 'no-store'}).then(function(r){
-            console.log('comfy.css fetch status:', r.status, 'content-length:', r.headers.get('content-length'));
-            if(!r.ok){
-                document.body.insertAdjacentHTML('afterbegin','<div style="background:#ffdddd;color:#900;padding:8px;text-align:center;font-weight:600;">Stylesheet not reachable (HTTP '+r.status+'). Check collectstatic and WhiteNoise.</div>');
-                return;
-            }
-            return r.text();
-        }).then(function(txt){
-            if(typeof txt !== 'string') return;
-            if(txt.indexOf('.hero-card') === -1){
-                // Some expected rules missing
-                document.body.insertAdjacentHTML('afterbegin','<div style="background:#fff7cc;color:#663c00;padding:8px;text-align:center;font-weight:600;">Stylesheet loaded but expected rules not found (possible stale/corrupt file).</div>');
-                console.warn('comfy.css: expected rule .hero-card not found.');
-            } else {
-                console.log('comfy.css looks correct (contains .hero-card).');
-            }
-        }).catch(function(err){
-            document.body.insertAdjacentHTML('afterbegin','<div style="background:#ffdddd;color:#900;padding:8px;text-align:center;font-weight:600;">Error fetching stylesheet: '+(err && err.message)+'</div>');
-            console.error('Error fetching comfy.css', err);
-        });
-    })();
-    </script>
+    <!-- (Removed runtime debug helper) -->
 </body>
 
 </html>
