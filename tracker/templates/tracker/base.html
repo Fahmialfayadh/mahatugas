@@ -13,87 +13,92 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="row">
+    <div class="container-fluid p-0 overflow-hidden">
+        <div class="row g-0">
             <!-- Sidebar -->
-            <nav class="col-md-2 d-none d-md-block sidebar p-0">
-                <div class="p-3">
-                    <h3>MahaTugas</h3>
-                    <p>Student Assignment Tracker</p>
-                    <hr>
-                    <ul class="nav nav-pills flex-column">
-                        <li class="nav-item">
-                            <a href="{% url 'dashboard' %}"
-                                class="nav-link {% if request.path == '/' %}active{% endif %}">
-                                Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'students_list' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'students_list' %}active{% endif %}">
-                                Students
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'lecturer_list' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'lecturer_list' %}active{% endif %}">
-                                Lecturers
-                            </a>
-                        </li>
+            <nav class="col-md-3 col-lg-2 d-none d-md-block sidebar">
+                <div class="d-flex flex-column h-100">
+                    <div class="p-4 sidebar-header">
+                        <h3>MahaTugas</h3>
+                        <p>Student Assignment Tracker</p>
+                    </div>
 
-                        <li class="nav-item">
-                            <a href="{% url 'courses_list' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'courses_list' %}active{% endif %}">
-                                Courses & Assignments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'submissions_list' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'submissions_list' %}active{% endif %}">
-                                Submissions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'transcript' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'transcript' %}active{% endif %}">
-                                Transcript
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{% url 'report_menu' %}"
-                                class="nav-link {% if request.resolver_match.url_name == 'report_menu' %}active{% endif %}">Reports</a>
-                        </li>
+                    <div class="sidebar-scrollable flex-grow-1 px-3">
+                        <ul class="nav nav-pills flex-column mb-auto">
+                            <li class="nav-item">
+                                <a href="{% url 'dashboard' %}"
+                                    class="nav-link {% if request.path == '/' %}active{% endif %}">
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'students_list' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'students_list' %}active{% endif %}">
+                                    Students
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'lecturer_list' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'lecturer_list' %}active{% endif %}">
+                                    Lecturers
+                                </a>
+                            </li>
 
-                        <li class="nav-item mt-3">
-                            <a href="{% url 'toggle_edit' %}" class="btn btn-outline-warning w-100">
-                                {% if request.session.edit_mode %}
-                                🔒 Exit Edit Mode
-                                {% else %}
-                                ✏️ Enter Edit Mode
-                                {% endif %}
-                            </a>
-                        </li>
-                        <li class="mt-4">
-                            <a href="{% url 'queries_menu' %}" class="text-muted small">
-                                Queries Demo
-                            </a>
-                        </li>
-                        <li class="nav-item mt-3">
-                            <a class="nav-link small text-muted" href="{% url 'overview' %}">
-                                Overview
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="{% url 'courses_list' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'courses_list' %}active{% endif %}">
+                                    Courses & Assignments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'submissions_list' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'submissions_list' %}active{% endif %}">
+                                    Submissions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'transcript' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'transcript' %}active{% endif %}">
+                                    Transcript
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'report_menu' %}"
+                                    class="nav-link {% if request.resolver_match.url_name == 'report_menu' %}active{% endif %}">Reports</a>
+                            </li>
 
-
-
-                    </ul>
+                            <li class="nav-item mt-3">
+                                <a href="{% url 'toggle_edit' %}" class="btn btn-outline-warning w-100">
+                                    {% if request.session.edit_mode %}
+                                    🔒 Exit Edit Mode
+                                    {% else %}
+                                    ✏️ Enter Edit Mode
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li class="mt-4">
+                                <a href="{% url 'queries_menu' %}" class="text-muted small">
+                                    Queries Demo
+                                </a>
+                            </li>
+                            <li class="nav-item mt-3">
+                                <a class="nav-link small text-muted" href="{% url 'overview' %}">
+                                    Overview
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
             <!-- Main content -->
-            <main class="col-md-10 ms-sm-auto col-lg-10 content">
-                {% block content %}
-                {% endblock %}
+            <main class="col-md-9 ms-sm-auto col-lg-10 content-wrapper">
+                <div class="content-scrollable">
+                    <div class="container-fluid content-inner">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                </div>
             </main>
         </div>
     </div>
