@@ -2,148 +2,315 @@
 
 {% block content %}
 
-<!-- Header / Hero -->
-<div class="row align-items-center mb-4">
-    <div class="col-md-6">
-        <h1 class="display-5 fw-bold" style="color: var(--accent-color);">Academic Transcript</h1>
-        <p class="text-secondary">Comprehensive view of all student performance and statistics.</p>
+<!-- Transcript Application Container -->
+<div class="container py-4">
+
+    <!-- Filter Control Panel (No Print) -->
+    <div class="card mb-4 border-0 shadow-sm d-print-none bg-surface" style="position: relative; z-index: 1050;">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0 text-primary fw-bold">Academic Transcript</h5>
+                    <p class="text-muted small mb-0">Select a student/course to generate report</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex gap-2 justify-content-md-end">
+
+                        <!-- Filter Student -->
+                        <div class="dropdown">
+                            <button class="btn btn-white border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {% if active_student %}👤 {{ active_student.name|truncatechars:15 }}{% else %}Filter by
+                                Student{% endif %}
+                            </button>
+                            <ul class="dropdown-menu shadow border-0" style="max-height: 300px; overflow-y: auto;">
+                                <li><a class="dropdown-item" href="{% url 'transcript' %}">All Students</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                {% for s in all_students %}
+                                <li><a class="dropdown-item" href="{% url 'transcript_by_student' s.student_id %}">{{                                         s.name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <!-- Filter Course -->
+                        <div class="dropdown">
+                            <button class="btn btn-white border dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {% if active_course %}📚 {{ active_course.course_code }}{% else %}Filter by Course{%                                 endif %}
+                            </button>
+                            <ul class="dropdown-menu shadow border-0" style="max-height: 300px; overflow-y: auto;">
+                                <li><a class="dropdown-item" href="{% url 'transcript' %}">All Courses</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                {% for c in courses %}
+                                <li><a class="dropdown-item" href="{% url 'transcript_by_course' c.course_id %}">{{                                         c.course_code }} - {{ c.course_name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <button onclick="window.print()" class="btn btn-primary">
+                            🖨️ Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-6 text-md-end">
-        <div class="d-inline-block bg-white p-3 rounded-pill shadow-sm border">
-            <span class="text-muted small text-uppercase fw-bold me-2">Average Score</span>
-            <span class="fs-4 fw-bold" style="color: var(--text-primary);">{{ average_score|floatformat:1 }}</span>
+
+    <!-- Formal Transcript Paper -->
+    <div class="transcript-paper mx-auto bg-white shadow-lg p-5" style="max-width: 210mm; min-height: 297mm;">
+
+        <!-- Institution Header -->
+        <div class="text-center mb-5 border-bottom pb-4">
+            <h1 class="serif fw-bold text-uppercase mb-2" style="letter-spacing: 2px;">MahaTugas University</h1>
+            <p class="text-muted fst-italic mb-1">Official Academic Record</p>
+            <p class="small text-secondary">123 Academic Avenue, Knowledge City • (555) 123-4567</p>
         </div>
-        <div class="d-inline-block bg-white p-3 rounded-pill shadow-sm border ms-3">
-            <span class="text-muted small text-uppercase fw-bold me-2">Total Submissions</span>
-            <span class="fs-4 fw-bold" style="color: var(--text-primary);">{{ submissions.count }}</span>
+
+        {% if active_course %}
+        <!-- ========================== COURSE REPORT VIEW ========================== -->
+
+        <!-- Course View Header -->
+        <div class="row mb-5">
+            <div class="col-8">
+                <table class="table table-borderless table-sm w-auto">
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold" style="width: 120px;">Course Name</td>
+                        <td class="fw-bold fs-5">{{ active_course.course_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Course Code</td>
+                        <td>{{ active_course.course_code }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Semester</td>
+                        <td>{{ active_course.semester|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Lecturer</td>
+                        <td>{{ active_course.lecturer.lecturer_name|default:"-" }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-4 text-end align-self-end">
+                <div class="bg-light p-3 rounded text-center border">
+                    <div class="small text-uppercase text-muted fw-bold">Class Average</div>
+                    <div class="display-6 fw-bold text-dark">{{ average_score|floatformat:2 }}</div>
+                </div>
+            </div>
         </div>
+
+        <!-- Course View Table (Grouped by Assignment) -->
+        <div class="mb-5">
+            <h5 class="text-uppercase border-bottom border-2 border-dark pb-2 mb-3 fw-bold small ls-1">Student
+                Performance</h5>
+
+            {% regroup submissions|dictsort:"assignment.title" by assignment as assignment_list %}
+
+            <table class="table table-sm formal-table">
+                <thead>
+                    <tr class="text-uppercase small text-muted border-bottom">
+                        <th style="width: 40%">Student Name</th>
+                        <th class="text-center">NRP</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-end">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for assignment in assignment_list %}
+                    <!-- Assignment Header -->
+                    <tr class="bg-light table-group-divider">
+                        <td colspan="4" class="py-2 ps-2">
+                            <span class="fw-bold text-dark">{{ assignment.grouper.title }}</span>
+                            <span class="text-muted small ms-2">Due: {{ assignment.grouper.due_date|date:"M d, Y"                                 }}</span>
+                        </td>
+                    </tr>
+
+                    <!-- Student Rows -->
+                    {% for item in assignment.list %}
+                    <tr>
+                        <td class="ps-4 text-secondary">{{ item.student.name }}</td>
+                        <td class="text-center font-monospace small">{{ item.student.nrp|default:"-" }}</td>
+                        <td class="text-center small">
+                            {% if item.status == 'Late' %}
+                            <span class="text-danger fw-bold">LATE</span>
+                            {% else %}
+                            <span class="text-success">ON TIME</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end fw-bold font-monospace">
+                            {{ item.score|floatformat:0 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted fst-italic">
+                            No submissions found for this course.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+        <!-- ========================== STUDENT TRANSCRIPT VIEW ========================== -->
+
+        <!-- Student View Header -->
+        <div class="row mb-5">
+            <div class="col-8">
+                <table class="table table-borderless table-sm w-auto">
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold" style="width: 120px;">Student Name</td>
+                        <td class="fw-bold fs-5">
+                            {% if active_student %}{{ active_student.name }}{% else %}<span
+                                class="text-muted fst-italic">Multiple Students Selected</span>{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Student ID</td>
+                        <td>{% if active_student %}STD-{{ active_student.student_id|stringformat:"04d" }}{% else %}---{%                             endif %}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted text-uppercase small fw-bold">Date Issued</td>
+                        <td>{% now "F j, Y" %}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-4 text-end align-self-end">
+                <div class="bg-light p-3 rounded text-center border">
+                    <div class="small text-uppercase text-muted fw-bold">Cumulative Average</div>
+                    <div class="display-6 fw-bold text-dark">{{ average_score|floatformat:2 }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student View Table (Grouped by Course) -->
+        <div class="mb-5">
+            <h5 class="text-uppercase border-bottom border-2 border-dark pb-2 mb-3 fw-bold small ls-1">Academic
+                Performance</h5>
+
+            {% regroup submissions by assignment.course as course_list %}
+
+            <table class="table table-sm formal-table">
+                <thead>
+                    <tr class="text-uppercase small text-muted border-bottom">
+                        <th style="width: 40%">Course / Assignment</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-end">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in course_list %}
+                    <!-- Course Header Row -->
+                    <tr class="bg-light table-group-divider">
+                        <td colspan="3" class="py-2 ps-2">
+                            <span class="fw-bold text-dark">{{ course.grouper.course_code }} - {{                                 course.grouper.course_name }}</span>
+                        </td>
+                    </tr>
+
+                    <!-- Assignment Rows -->
+                    {% for item in course.list %}
+                    <tr>
+                        <td class="ps-4 text-secondary">{{ item.assignment.title }}</td>
+                        <td class="text-center small">
+                            {% if item.status == 'Late' %}
+                            <span class="text-danger fw-bold">LATE</span>
+                            {% else %}
+                            <span class="text-success">ON TIME</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end fw-bold font-monospace">
+                            {{ item.score|floatformat:0 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted fst-italic">
+                            No academic records found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Footer / Signature -->
+        <div class="mt-auto pt-5">
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-6 text-center">
+                    <div class="border-bottom border-dark mb-2" style="width: 80%; margin: 0 auto;"></div>
+                    <p class="fw-bold mb-0">Prof. Albus Dumbledore</p>
+                    <p class="small text-muted">Head of Faculty</p>
+                </div>
+            </div>
+            <div class="text-center mt-5 small text-muted">
+                <p>Generated by MahaTugas System. Valid without signature if verified online.</p>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- Filters & Search -->
-<div class="card mb-4">
-    <div class="row g-3 align-items-center">
-        <!-- Search Bar -->
-        <div class="col-md-4">
-            <input type="text" id="searchInput" class="form-control rounded-pill border-0 bg-light py-2 px-4" placeholder="🔍 Search student, course..." onkeyup="filterTable()">
-        </div>
-        
-        <!-- Filter Tabs (Styled as Pills) -->
-        <div class="col-md-8">
-             <ul class="nav nav-pills justify-content-md-end gap-2" id="filterPills">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {% if active_course %}active{% endif %}" data-bs-toggle="dropdown" href="#" role="button">
-                        {% if active_course %}{{ active_course.course_code }}{% else %}Filter by Course{% endif %}
-                    </a>
-                    <ul class="dropdown-menu shadow-sm border-0">
-                        <li><a class="dropdown-item" href="{% url 'transcript' %}">All Courses</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        {% for c in courses %}
-                        <li><a class="dropdown-item" href="{% url 'transcript_by_course' c.course_id %}">{{ c.course_code }} - {{ c.course_name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </li>
-
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle {% if active_student %}active{% endif %}" data-bs-toggle="dropdown" href="#" role="button">
-                        {% if active_student %}{{ active_student.name|truncatechars:10 }}{% else %}Filter by Student{% endif %}
-                    </a>
-                    <ul class="dropdown-menu shadow-sm border-0">
-                        <li><a class="dropdown-item" href="{% url 'transcript' %}">All Students</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        {% for s in all_students %}
-                        <li><a class="dropdown-item" href="{% url 'transcript_by_student' s.student_id %}">{{ s.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                </li>
-                 
-                {% if active_course or active_student %}
-                <li class="nav-item">
-                    <a href="{% url 'transcript' %}" class="btn btn-outline-secondary rounded-pill px-3">Clear Filters</a>
-                </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- Data Table -->
-<div class="card p-0 overflow-hidden">
-    <div class="table-responsive">
-        <table class="table mb-0" id="transcriptTable">
-            <thead class="bg-light">
-                <tr>
-                    <th class="ps-4">Student</th>
-                    <th>Course</th>
-                    <th>Assignment</th>
-                    <th class="text-center">Score</th>
-                    <th class="text-center">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for x in submissions %}
-                <tr>
-                    <td class="ps-4 fw-bold text-primary">{{ x.student.name }}</td>
-                    <td>
-                        <span class="badge bg-light text-dark border">{{ x.assignment.course.course_code }}</span>
-                    </td>
-                    <td>{{ x.assignment.title }}</td>
-                    <td class="text-center">
-                        {% if x.score >= 85 %}
-                            <span class="text-success fw-bold">{{ x.score }}</span>
-                        {% elif x.score < 50 %}
-                            <span class="text-danger fw-bold">{{ x.score }}</span>
-                        {% else %}
-                            <span class="text-dark fw-bold">{{ x.score }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-center">
-                        {% if x.status == "Late" %}
-                        <span class="badge bg-warning text-dark rounded-pill">Late</span>
-                        {% elif x.status == "On Time" %}
-                        <span class="badge bg-success rounded-pill">On Time</span>
-                        {% else %}
-                        <span class="badge bg-secondary rounded-pill">{{ x.status }}</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">
-                        <div class="fs-1 mb-2">📂</div>
-                        No submissions found for this filter.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-function filterTable() {
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("searchInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("transcriptTable");
-  tr = table.getElementsByTagName("tr");
-
-  for (i = 1; i < tr.length; i++) {
-    var tdStudent = tr[i].getElementsByTagName("td")[0];
-    var tdAssign = tr[i].getElementsByTagName("td")[2];
-    
-    if (tdStudent || tdAssign) {
-      var txtStudent = tdStudent.textContent || tdStudent.innerText;
-      var txtAssign = tdAssign.textContent || tdAssign.innerText;
-      
-      if (txtStudent.toUpperCase().indexOf(filter) > -1 || txtAssign.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
+<style>
+    /* Local Styles for Transcript */
+    .ls-1 {
+        letter-spacing: 1px;
     }
-  }
-}
-</script>
+
+    .serif {
+        font-family: "Merriweather", "Times New Roman", serif;
+    }
+
+    .formal-table td,
+    .formal-table th {
+        padding: 0.75rem 0.5rem;
+        vertical-align: middle;
+    }
+
+    .transcript-paper {
+        position: relative;
+    }
+
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+
+        .sidebar,
+        .navbar {
+            display: none !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .transcript-paper,
+        .transcript-paper * {
+            visibility: visible;
+        }
+
+        .transcript-paper {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+</style>
 
 {% endblock %}
