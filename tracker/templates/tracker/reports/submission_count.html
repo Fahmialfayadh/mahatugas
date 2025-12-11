@@ -2,17 +2,17 @@
 {% block content %}
 <h3>Total Submissions Per Student</h3>
 
-<table class="table table-dark table-striped mt-3">
-<tr>
-    <th>Student</th>
-    <th>Total Submissions</th>
-</tr>
+<table class="table table-striped mt-3">
+    <tr>
+        <th>Student</th>
+        <th>Total Submissions</th>
+    </tr>
 
-{% for s in data %}
-<tr>
-    <td>{{ s.name }}</td>
-    <td>{{ s.total }}</td>
-</tr>
-{% endfor %}
+    {% for s in data %}
+    <tr>
+        <td>{{ s.name }}</td>
+        <td>{{ s.total }}</td>
+    </tr>
+    {% endfor %}
 </table>
 {% endblock %}

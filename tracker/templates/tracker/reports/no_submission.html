@@ -2,19 +2,19 @@
 {% block content %}
 <h3>Assignments Without Any Submission</h3>
 
-<table class="table table-dark table-striped mt-3">
-<tr>
-    <th>Assignment</th>
-    <th>Course</th>
-    <th>Due Date</th>
-</tr>
+<table class="table table-striped mt-3">
+    <tr>
+        <th>Assignment</th>
+        <th>Course</th>
+        <th>Due Date</th>
+    </tr>
 
-{% for a in assignments %}
-<tr>
-    <td>{{ a.title }}</td>
-    <td>{{ a.course.course_code }}</td>
-    <td>{{ a.due_date }}</td>
-</tr>
-{% endfor %}
+    {% for a in assignments %}
+    <tr>
+        <td>{{ a.title }}</td>
+        <td>{{ a.course.course_code }}</td>
+        <td>{{ a.due_date }}</td>
+    </tr>
+    {% endfor %}
 </table>
 {% endblock %}

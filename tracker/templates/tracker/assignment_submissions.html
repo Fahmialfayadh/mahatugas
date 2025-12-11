@@ -4,11 +4,11 @@
 <h2>{{ assignment.title }} — Submissions</h2>
 
 {% if edit_mode %}
-<a href="{% url 'submission_create' %}?assignment={{ assignment.assignment_id }}" 
-   class="btn btn-success mb-3">+ Add Submission</a>
+<a href="{% url 'submission_create' %}?assignment={{ assignment.assignment_id }}" class="btn btn-success mb-3">+ Add
+    Submission</a>
 {% endif %}
 
-<table class="table table-dark table-striped">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Student</th>
@@ -16,7 +16,7 @@
             <th>Submitted At</th>
             <th>File</th>
             {% if edit_mode %}
-                <th>Actions</th>
+            <th>Actions</th>
             {% endif %}
         </tr>
     </thead>
@@ -30,9 +30,9 @@
 
             <td>
                 {% if s.file_path %}
-                    <a href="{{ s.file_path.url }}" class="btn btn-primary btn-sm" target="_blank">Open</a>
+                <a href="{{ s.file_path.url }}" class="btn btn-primary btn-sm" target="_blank">Open</a>
                 {% else %}
-                    <span class="text-secondary">No File</span>
+                <span class="text-secondary">No File</span>
                 {% endif %}
             </td>
 

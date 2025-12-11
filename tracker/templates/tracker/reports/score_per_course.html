@@ -2,17 +2,17 @@
 {% block content %}
 <h3>Average Score Per Course</h3>
 
-<table class="table table-dark table-striped mt-3">
-<tr>
-    <th>Course</th>
-    <th>Average Score</th>
-</tr>
+<table class="table table-striped mt-3">
+    <tr>
+        <th>Course</th>
+        <th>Average Score</th>
+    </tr>
 
-{% for c in data %}
-<tr>
-    <td>{{ c.course_code }}</td>
-    <td>{{ c.avg_score|default:"0"|floatformat:2 }}</td>
-</tr>
-{% endfor %}
+    {% for c in data %}
+    <tr>
+        <td>{{ c.course_code }}</td>
+        <td>{{ c.avg_score|default:"0"|floatformat:2 }}</td>
+    </tr>
+    {% endfor %}
 </table>
 {% endblock %}

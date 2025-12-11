@@ -350,8 +350,11 @@ def submission_delete(request, submission_id):
 
 def transcript_view(request):
     submissions = Submission.objects.select_related("student", "assignment__course")
+    avg_score = submissions.aggregate(Avg("score"))["score__avg"] or 0
+
     return render(request, "tracker/transcript.html", {
         "submissions": submissions,
+        "average_score": avg_score,
         "courses": Course.objects.all(),
         "all_students": Student.objects.all(),
         "active_course": None,
@@ -361,9 +364,11 @@ def transcript_view(request):
 def transcript_by_course(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
     submissions = Submission.objects.filter(assignment__course_id=course_id).select_related("student", "assignment__course")
+    avg_score = submissions.aggregate(Avg("score"))["score__avg"] or 0
 
     return render(request, "tracker/transcript.html", {
         "submissions": submissions,
+        "average_score": avg_score,
         "courses": Course.objects.all(),
         "all_students": Student.objects.all(),
         "active_course": course,
@@ -374,9 +379,11 @@ def transcript_by_course(request, course_id):
 def transcript_by_student(request, student_id):
     student = get_object_or_404(Student, pk=student_id)
     submissions = Submission.objects.filter(student_id=student_id).select_related("student", "assignment__course")
+    avg_score = submissions.aggregate(Avg("score"))["score__avg"] or 0
 
     return render(request, "tracker/transcript.html", {
         "submissions": submissions,
+        "average_score": avg_score,
         "courses": Course.objects.all(),
         "all_students": Student.objects.all(),
         "active_course": None,

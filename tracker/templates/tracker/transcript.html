@@ -1,83 +1,149 @@
 {% extends "tracker/base.html" %}
 
 {% block content %}
-<h1>Transcript</h1>
 
-<h4>Filter by Course:</h4>
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link {% if not active_course and not active_student %}active{% endif %}"
-           href="{% url 'transcript' %}">
-           All Courses
-        </a>
-    </li>
+<!-- Header / Hero -->
+<div class="row align-items-center mb-4">
+    <div class="col-md-6">
+        <h1 class="display-5 fw-bold" style="color: var(--accent-color);">Academic Transcript</h1>
+        <p class="text-secondary">Comprehensive view of all student performance and statistics.</p>
+    </div>
+    <div class="col-md-6 text-md-end">
+        <div class="d-inline-block bg-white p-3 rounded-pill shadow-sm border">
+            <span class="text-muted small text-uppercase fw-bold me-2">Average Score</span>
+            <span class="fs-4 fw-bold" style="color: var(--text-primary);">{{ average_score|floatformat:1 }}</span>
+        </div>
+        <div class="d-inline-block bg-white p-3 rounded-pill shadow-sm border ms-3">
+            <span class="text-muted small text-uppercase fw-bold me-2">Total Submissions</span>
+            <span class="fs-4 fw-bold" style="color: var(--text-primary);">{{ submissions.count }}</span>
+        </div>
+    </div>
+</div>
 
-    {% for c in courses %}
-    <li class="nav-item">
-        <a class="nav-link {% if active_course and active_course.course_id == c.course_id %}active{% endif %}"
-           href="{% url 'transcript_by_course' c.course_id %}">
-           {{ c.course_code }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+<!-- Filters & Search -->
+<div class="card mb-4">
+    <div class="row g-3 align-items-center">
+        <!-- Search Bar -->
+        <div class="col-md-4">
+            <input type="text" id="searchInput" class="form-control rounded-pill border-0 bg-light py-2 px-4" placeholder="🔍 Search student, course..." onkeyup="filterTable()">
+        </div>
+        
+        <!-- Filter Tabs (Styled as Pills) -->
+        <div class="col-md-8">
+             <ul class="nav nav-pills justify-content-md-end gap-2" id="filterPills">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if active_course %}active{% endif %}" data-bs-toggle="dropdown" href="#" role="button">
+                        {% if active_course %}{{ active_course.course_code }}{% else %}Filter by Course{% endif %}
+                    </a>
+                    <ul class="dropdown-menu shadow-sm border-0">
+                        <li><a class="dropdown-item" href="{% url 'transcript' %}">All Courses</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        {% for c in courses %}
+                        <li><a class="dropdown-item" href="{% url 'transcript_by_course' c.course_id %}">{{ c.course_code }} - {{ c.course_name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
 
-<h4>Filter by Student:</h4>
-
-<ul class="nav nav-tabs mb-3">
-    <li class="nav-item">
-        <a class="nav-link {% if not active_student %}active{% endif %}"
-           href="{% url 'transcript' %}">
-           All Students
-        </a>
-    </li>
-
-    {% for s in all_students %}
-    <li class="nav-item">
-        <a class="nav-link {% if active_student and active_student.student_id == s.student_id %}active{% endif %}"
-           href="{% url 'transcript_by_student' s.student_id %}">
-           {{ s.name }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-
-
-<table class="table table-dark table-striped">
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Assignment</th>
-            <th>Score</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-
-    <tbody>
-    {% for x in submissions %}
-        <tr>
-            <td>{{ x.student.name }}</td>
-            <td>{{ x.assignment.course.course_code }}</td>
-            <td>{{ x.assignment.title }}</td>
-            <td>{{ x.score }}</td>
-
-            <td>
-                {% if x.status == "Late" %}
-                    <span class="badge bg-warning text-dark">Late</span>
-                {% elif x.status == "On Time" %}
-                    <span class="badge bg-success">On Time</span>
-                {% else %}
-                    <span class="badge bg-secondary">{{ x.status }}</span>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if active_student %}active{% endif %}" data-bs-toggle="dropdown" href="#" role="button">
+                        {% if active_student %}{{ active_student.name|truncatechars:10 }}{% else %}Filter by Student{% endif %}
+                    </a>
+                    <ul class="dropdown-menu shadow-sm border-0">
+                        <li><a class="dropdown-item" href="{% url 'transcript' %}">All Students</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        {% for s in all_students %}
+                        <li><a class="dropdown-item" href="{% url 'transcript_by_student' s.student_id %}">{{ s.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                 
+                {% if active_course or active_student %}
+                <li class="nav-item">
+                    <a href="{% url 'transcript' %}" class="btn btn-outline-secondary rounded-pill px-3">Clear Filters</a>
+                </li>
                 {% endif %}
-            </td>
-        </tr>
-    {% empty %}
-        <tr>
-            <td colspan="5" class="text-center text-muted">No data</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Data Table -->
+<div class="card p-0 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table mb-0" id="transcriptTable">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Student</th>
+                    <th>Course</th>
+                    <th>Assignment</th>
+                    <th class="text-center">Score</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in submissions %}
+                <tr>
+                    <td class="ps-4 fw-bold text-primary">{{ x.student.name }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark border">{{ x.assignment.course.course_code }}</span>
+                    </td>
+                    <td>{{ x.assignment.title }}</td>
+                    <td class="text-center">
+                        {% if x.score >= 85 %}
+                            <span class="text-success fw-bold">{{ x.score }}</span>
+                        {% elif x.score < 50 %}
+                            <span class="text-danger fw-bold">{{ x.score }}</span>
+                        {% else %}
+                            <span class="text-dark fw-bold">{{ x.score }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if x.status == "Late" %}
+                        <span class="badge bg-warning text-dark rounded-pill">Late</span>
+                        {% elif x.status == "On Time" %}
+                        <span class="badge bg-success rounded-pill">On Time</span>
+                        {% else %}
+                        <span class="badge bg-secondary rounded-pill">{{ x.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <div class="fs-1 mb-2">📂</div>
+                        No submissions found for this filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function filterTable() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("searchInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("transcriptTable");
+  tr = table.getElementsByTagName("tr");
+
+  for (i = 1; i < tr.length; i++) {
+    var tdStudent = tr[i].getElementsByTagName("td")[0];
+    var tdAssign = tr[i].getElementsByTagName("td")[2];
+    
+    if (tdStudent || tdAssign) {
+      var txtStudent = tdStudent.textContent || tdStudent.innerText;
+      var txtAssign = tdAssign.textContent || tdAssign.innerText;
+      
+      if (txtStudent.toUpperCase().indexOf(filter) > -1 || txtAssign.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
 
 {% endblock %}

@@ -1,137 +1,100 @@
 {% extends "tracker/base.html" %}
 
 {% block content %}
-<style>
-    .stats-card {
-        background: #1f1f1f;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 0 8px rgba(0,0,0,0.35);
-        transition: 0.2s;
-    }
-    .stats-card:hover {
-        transform: translateY(-4px);
-    }
-    .stats-value {
-        font-size: 32px;
-        font-weight: bold;
-        color: #4caf50;
-    }
-    .stats-label {
-        font-size: 14px;
-        opacity: 0.8;
-    }
 
-    .dash-card {
-        background: #1e1e1e;
-        border-radius: 12px;
-        padding: 18px;
-        margin-bottom: 18px;
-        box-shadow: 0 0 8px rgba(0,0,0,0.35);
-        transition: 0.2s ease;
-        cursor: pointer;
-    }
-    .dash-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 0 16px rgba(0,0,0,0.45);
-    }
-
-    .status-pill {
-        padding: 4px 10px;
-        border-radius: 50px;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .pill-missing { background:#ff4d4d; color:#fff; }
-    .pill-late { background:#ffb300; color:#000; }
-    .pill-nosub { background:#607d8b; color:#fff; }
-    .pill-has { background:#4caf50; color:#fff; }
-
-    .due-date {
-        font-size: 13px;
-        opacity: 0.8;
-    }
-</style>
-
-
-<h2 class="mb-4">Dashboard</h2>
-
-<!-- =======================
-     STATISTICS SECTION
-========================== -->
-<div class="row mb-4">
-
-    <div class="col-md-3 mb-3">
-        <div class="stats-card">
-            <div class="stats-value">{{ total_students }}</div>
-            <div class="stats-label">Students</div>
-        </div>
+<!-- Hero Section -->
+<div class="hero-card">
+    <div class="hero-shapes"></div>
+    <div class="position-relative">
+        <h2>Welcome!</h2>
+        <p>Here's an overview of students' academic progress.</p>
     </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="stats-card">
-            <div class="stats-value">{{ total_courses }}</div>
-            <div class="stats-label">Courses</div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="stats-card">
-            <div class="stats-value">{{ total_assignments }}</div>
-            <div class="stats-label">Assignments</div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="stats-card">
-            <div class="stats-value">{{ total_submissions }}</div>
-            <div class="stats-label">Submissions</div>
-        </div>
-    </div>
-
 </div>
 
-
-
-<!-- =======================
-     ASSIGNMENT CARDS
-========================== -->
-<div class="row">
-
-    {% for a in assignment_status_list %}
-    <div class="col-md-6 col-lg-4">
-        <a href="{% url 'course_detail' a.assignment.course.course_id %}" style="text-decoration:none; color:inherit;">
-            <div class="dash-card">
-
-                <h5>{{ a.assignment.title }}</h5>
-
-                <div class="text-secondary mb-1">
-                    {{ a.assignment.course.course_code }} - {{ a.assignment.course.course_name }}
-                </div>
-
-                <div class="due-date mb-2">
-                    Due: {{ a.assignment.due_date|date:"M d, Y - H:i" }}
-                </div>
-
-                {% if a.status == "Missing" %}
-                    <span class="status-pill pill-missing">Missing</span>
-                {% elif a.status == "No Submission Yet" %}
-                    <span class="status-pill pill-nosub">No Submission Yet</span>
-                {% elif a.status == "Has Submissions" %}
-                    <span class="status-pill pill-has">Has Submissions</span>
-                {% endif %}
-
-                <div class="mt-2">
-                    <small class="text-secondary">Submissions: {{ a.submitted_count }}</small>
-                </div>
-
-            </div>
-        </a>
+<!-- Floating Stats -->
+<div class="stats-container">
+    <div class="glass-stat">
+        <div class="stat-value">{{ total_students }}</div>
+        <div class="stat-label">Students</div>
     </div>
-    {% endfor %}
+    <div class="glass-stat">
+        <div class="stat-value">{{ total_courses }}</div>
+        <div class="stat-label">Courses</div>
+    </div>
+    <div class="glass-stat">
+        <div class="stat-value">{{ total_assignments }}</div>
+        <div class="stat-label">Assignments</div>
+    </div>
+    <div class="glass-stat">
+        <div class="stat-value">{{ total_submissions }}</div>
+        <div class="stat-label">Submissions</div>
+    </div>
+</div>
 
+<!-- Main Dashboard Content -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="section-title">
+            <span>📅</span> Upcoming Timeline
+        </div>
+
+        <div class="timeline-container">
+            {% for a in assignment_status_list %}
+            <a href="{% url 'course_detail' a.assignment.course.course_id %}" class="text-decoration-none">
+                <div
+                    class="timeline-item {% if a.status == 'Missing' %}urgent{% elif a.status == 'No Submission Yet' %}soon{% else %}chill{% endif %}">
+                    <div class="timeline-date">
+                        <div class="day">{{ a.assignment.due_date|date:"d" }}</div>
+                        <div class="month">{{ a.assignment.due_date|date:"M" }}</div>
+                    </div>
+                    <div class="timeline-content">
+                        <h5>{{ a.assignment.title }}</h5>
+                        <p>
+                            {{ a.assignment.course.course_name }}
+                            {% if a.status == 'Missing' %}
+                            <span class="badge bg-danger">Missing</span>
+                            {% elif a.status == 'No Submission Yet' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                            {% else %}
+                            <span class="badge bg-success">Done</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="ms-auto text-muted small d-none d-sm-block">
+                        Due: {{ a.assignment.due_date|date:"H:i" }}
+                    </div>
+                </div>
+            </a>
+            {% empty %}
+            <div class="text-center p-5 text-muted">
+                <p>No active assignments. Time to relax! ☕</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Quick Actions Card -->
+        <div class="card p-4">
+            <h4>Quick Actions</h4>
+            <div class="d-grid gap-2 mt-3">
+                <a href="{% url 'submission_create' %}" class="btn btn-primary">
+                    + New Submission
+                </a>
+                <a href="{% url 'assignment_create' %}" class="btn btn-outline-accent">
+                    + Add Assignment
+                </a>
+            </div>
+        </div>
+
+        <!-- Help/Info Card -->
+        <div class="card p-4 mt-4" style="background: var(--accent-color); color: white;">
+            <h5>Need Insights?</h5>
+            <p class="small opacity-75 mb-3">Check the reports section to see detailed analytics of your performance.
+            </p>
+            <a href="{% url 'report_menu' %}" class="btn btn-light text-primary fw-bold border-0">View Reports</a>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

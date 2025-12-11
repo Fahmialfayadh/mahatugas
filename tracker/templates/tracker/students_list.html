@@ -5,38 +5,38 @@
 
 {# tombol add student hanya muncul jika edit mode aktif #}
 {% if request.session.edit_mode %}
-    <a href="{% url 'student_create' %}" class="btn btn-success mb-3">+ Add Student</a>
+<a href="{% url 'student_create' %}" class="btn btn-success mb-3">+ Add Student</a>
 {% endif %}
 
-<table class="table table-dark table-striped">
+<table class="table table-striped">
     <thead>
-    <tr>
-        <th>NRP</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Photo</th>
-        <th>Actions</th>
-    </tr>
+        <tr>
+            <th>NRP</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Photo</th>
+            <th>Actions</th>
+        </tr>
     </thead>
 
     <tbody>
-    {% for s in students %}
-    <tr>
-        <td>{{ s.nrp }}</td>
-        <td>{{ s.name }}</td>
-        <td>{{ s.email }}</td>
-        <td>{{ s.photo_file }}</td>
+        {% for s in students %}
+        <tr>
+            <td>{{ s.nrp }}</td>
+            <td>{{ s.name }}</td>
+            <td>{{ s.email }}</td>
+            <td>{{ s.photo_file }}</td>
 
-        <td>
-            {% if request.session.edit_mode %}
+            <td>
+                {% if request.session.edit_mode %}
                 <a href="{% url 'student_edit' s.student_id %}" class="btn btn-primary btn-sm">Edit</a>
                 <a href="{% url 'student_delete' s.student_id %}" class="btn btn-danger btn-sm">Delete</a>
-            {% else %}
+                {% else %}
                 <span class="text-muted">View Only</span>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
 
